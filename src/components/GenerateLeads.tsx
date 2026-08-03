@@ -291,7 +291,10 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
 
   // Helper to call generate leads API and consume the SSE stream synchronously for file upload
   const callGenerateLeadsApi = async (payload: any): Promise<Lead[]> => {
-    const response = await fetch("/api/generate-leads", {
+
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const response = await fetch(`${API_URL}/api/generate-leads`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1013,376 +1016,375 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
         ) : (
           <>
             <div className="flex-1 flex min-h-0 relative">
-            {/* TABLE VIEW */}
-            {viewMode === "table" && (
-              <div className="w-full h-full overflow-auto custom-scroll relative">
-                <table className="w-full text-left border-collapse text-[13px]">
-                  <thead className="sticky top-0 bg-[#FAFAFD] text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider border-b border-[#E5E5EB] z-10 backdrop-blur-md">
-                    <tr>
-                      <th className="px-4 py-3 w-10 text-center">
-                        <input type="checkbox" checked={selectedLeads.size === leads.length && leads.length > 0} onChange={toggleSelectAll} className="w-[14px] h-[14px] rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] cursor-pointer" />
-                      </th>
-                      <th className="px-3 py-3 w-10">#</th>
-                      <th className="px-3 py-3 text-[#5A5A6D]">Name</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden md:table-cell">Title</th>
-                      <th className="px-3 py-3 text-[#5A5A6D]">Company</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden lg:table-cell">Email</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">Website</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">LinkedIn</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">Location</th>
-                      <th className="px-3 py-3 text-[#5A5A6D]">Segment</th>
-                      <th className="px-3 py-3 text-[#5A5A6D]">Priority</th>
-                      <th className="px-3 py-3 text-[#5A5A6D] hidden sm:table-cell">Channel</th>
-                      <th className="px-3 py-3 text-[#5A5A6D]">Email Status</th>
-                      <th className="px-3 py-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#E5E5EB]/60">
-                    {paginatedLeads.map((lead, idx) => {
-                      const isSelected = selectedLeads.has(lead.srNo);
-                      // @ts-ignore
-                      const pBadge = badgeStyles.priority[lead.priority] || "bg-slate-50 text-slate-600 border-slate-100";
-                      // @ts-ignore
-                      const sBadge = badgeStyles.segment[lead.segment] || "bg-slate-50 text-slate-600 border-slate-100";
-                      const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+              {/* TABLE VIEW */}
+              {viewMode === "table" && (
+                <div className="w-full h-full overflow-auto custom-scroll relative">
+                  <table className="w-full text-left border-collapse text-[13px]">
+                    <thead className="sticky top-0 bg-[#FAFAFD] text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider border-b border-[#E5E5EB] z-10 backdrop-blur-md">
+                      <tr>
+                        <th className="px-4 py-3 w-10 text-center">
+                          <input type="checkbox" checked={selectedLeads.size === leads.length && leads.length > 0} onChange={toggleSelectAll} className="w-[14px] h-[14px] rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] cursor-pointer" />
+                        </th>
+                        <th className="px-3 py-3 w-10">#</th>
+                        <th className="px-3 py-3 text-[#5A5A6D]">Name</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden md:table-cell">Title</th>
+                        <th className="px-3 py-3 text-[#5A5A6D]">Company</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden lg:table-cell">Email</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">Website</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">LinkedIn</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell">Location</th>
+                        <th className="px-3 py-3 text-[#5A5A6D]">Segment</th>
+                        <th className="px-3 py-3 text-[#5A5A6D]">Priority</th>
+                        <th className="px-3 py-3 text-[#5A5A6D] hidden sm:table-cell">Channel</th>
+                        <th className="px-3 py-3 text-[#5A5A6D]">Email Status</th>
+                        <th className="px-3 py-3"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E5E5EB]/60">
+                      {paginatedLeads.map((lead, idx) => {
+                        const isSelected = selectedLeads.has(lead.srNo);
+                        // @ts-ignore
+                        const pBadge = badgeStyles.priority[lead.priority] || "bg-slate-50 text-slate-600 border-slate-100";
+                        // @ts-ignore
+                        const sBadge = badgeStyles.segment[lead.segment] || "bg-slate-50 text-slate-600 border-slate-100";
+                        const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
 
-                      return (
-                        <tr key={lead.srNo} className={`group hover:bg-[#FAFAFD] transition-colors relative ${isSelected ? 'bg-[#F9F7FF] hover:bg-[#F3EFFF]' : ''}`}>
-                          {isSelected && <td className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#6B2BFF]"></td>}
-                          <td className="px-4 py-3.5 w-10 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(lead.srNo)} className="w-[14px] h-[14px] rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] cursor-pointer" />
-                          </td>
-                          <td className="px-3 py-3 w-10 text-[#A0A0B2] font-mono text-[11px]">{lead.srNo.toString().padStart(2, '0')}</td>
-                          <td className="px-3 py-3 font-semibold text-[#111118]">
-                            <div className="flex items-center gap-2.5">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${isSelected ? 'bg-[#6B2BFF] text-white' : 'bg-[#EAE5FF] text-[#6B2BFF]'}`}>{initials}</div>
-                              {lead.name}
-                            </div>
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden md:table-cell whitespace-nowrap">{lead.title}</td>
-                          <td className="px-3 py-3 font-semibold text-[#111118]">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <Building2 className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.company}
-                            </div>
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden lg:table-cell hover:text-[#6B2BFF] transition-colors" onClick={(e) => e.stopPropagation()}>
-                            <a href={`mailto:${lead.email}`}>{lead.email}</a>
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell" onClick={(e) => e.stopPropagation()}>
-                            {lead.website ? (
-                              <div className="flex items-center gap-1.5">
-                                <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noreferrer" className="hover:text-[#6B2BFF] truncate max-w-[120px] inline-flex items-center gap-1" title={lead.website}>
-                                  <Globe className="w-3.5 h-3.5 shrink-0" />
-                                  <span className="truncate">{lead.website.replace(/^https?:\/\/(www\.)?/, '')}</span>
-                                </a>
-                                <a href={`https://www.google.com/search?q=${encodeURIComponent(lead.company + ' website')}`} target="_blank" rel="noreferrer" className="text-[#A0A0B2] hover:text-[#6B2BFF] transition-colors shrink-0 p-0.5" title="Search on Google">
-                                  <Search className="w-3 h-3" />
-                                </a>
+                        return (
+                          <tr key={lead.srNo} className={`group hover:bg-[#FAFAFD] transition-colors relative ${isSelected ? 'bg-[#F9F7FF] hover:bg-[#F3EFFF]' : ''}`}>
+                            {isSelected && <td className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#6B2BFF]"></td>}
+                            <td className="px-4 py-3.5 w-10 text-center" onClick={(e) => e.stopPropagation()}>
+                              <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(lead.srNo)} className="w-[14px] h-[14px] rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] cursor-pointer" />
+                            </td>
+                            <td className="px-3 py-3 w-10 text-[#A0A0B2] font-mono text-[11px]">{lead.srNo.toString().padStart(2, '0')}</td>
+                            <td className="px-3 py-3 font-semibold text-[#111118]">
+                              <div className="flex items-center gap-2.5">
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${isSelected ? 'bg-[#6B2BFF] text-white' : 'bg-[#EAE5FF] text-[#6B2BFF]'}`}>{initials}</div>
+                                {lead.name}
                               </div>
-                            ) : '—'}
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell" onClick={(e) => e.stopPropagation()}>
-                            {lead.linkedIn ? (
-                              <a href={lead.linkedIn.startsWith('http') ? lead.linkedIn : `https://${lead.linkedIn}`} target="_blank" rel="noreferrer" className="hover:text-[#0077B5] transition-colors truncate max-w-[150px] inline-flex items-center gap-1">
-                                <Linkedin className="w-3.5 h-3.5" />
-                                <span className="truncate">Profile</span>
-                              </a>
-                            ) : '—'}
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell whitespace-nowrap">{lead.location}</td>
-                          <td className="px-3 py-3">
-                            <span className={`px-2 py-0.5 rounded-[4px] text-[11px] font-bold border ${sBadge}`}>{lead.segment || 'Unknown'}</span>
-                          </td>
-                          <td className="px-3 py-3">
-                            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1.5 ${pBadge}`}>
-                              <div className={`w-1.5 h-1.5 rounded-full ${lead.priority === 'High' ? 'bg-red-500' : lead.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
-                              {lead.priority || 'Unknown'}
-                            </span>
-                          </td>
-                          <td className="px-3 py-3 text-[#5A5A6D] hidden sm:table-cell">
-                            <div className="flex items-center gap-1.5">
-                              {lead.channel?.toLowerCase().includes('email') ? <Mail className="w-3.5 h-3.5" /> : lead.channel?.toLowerCase().includes('phone') ? <Phone className="w-3.5 h-3.5" /> : <Linkedin className="w-3.5 h-3.5" />}
-                              {lead.channel}
-                            </div>
-                          </td>
-                          <td className="px-3 py-3">
-                            {lead.email_status ? (
-                              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1 ${
-                                lead.email_status.toLowerCase() === 'sent' 
-                                  ? 'bg-green-50 text-green-600 border-green-100' 
-                                  : 'bg-red-50 text-red-600 border-red-100'
-                              }`} title={lead.email_error || undefined}>
-                                <div className={`w-1 h-1 rounded-full ${lead.email_status.toLowerCase() === 'sent' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                                {lead.email_status.toLowerCase() === 'sent' ? 'Sent' : 'Failed'}
-                              </span>
-                            ) : (
-                              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1 bg-slate-50 text-slate-500 border-slate-100">
-                                <div className="w-1 h-1 rounded-full bg-slate-400"></div>
-                                Unsent
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-3 py-3 text-right">
-                            <button className="opacity-0 group-hover:opacity-100 text-[#A0A0B2] hover:text-[#111118] transition-opacity p-1">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {/* SPLIT VIEW */}
-            {viewMode === "split" && (
-              <div className="w-full h-full flex overflow-hidden">
-                {/* Split List */}
-                <div className="w-[380px] shrink-0 border-r border-[#E5E5EB] bg-[#FAFAFC] flex flex-col h-full overflow-auto custom-scroll">
-                  <div className="p-3 border-b border-[#E5E5EB] flex items-center justify-between text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider sticky top-0 bg-[#FAFAFC] z-10">
-                    <span className="flex items-center gap-2"><ArrowUpDown className="w-3 h-3" /> LEADS · {filteredLeads.length}</span>
-                  </div>
-                  <div className="flex-1 p-2 flex flex-col gap-1">
-                    {paginatedLeads.map((lead) => {
-                      const isActive = selectedLeadData?.srNo === lead.srNo;
-                      const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
-                      return (
-                        <div
-                          key={lead.srNo}
-                          onClick={() => setSelectedLeadData(lead)}
-                          className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-all border group ${isActive ? 'bg-white border-[#D0B8FF] shadow-[0_2px_8px_rgba(107,43,255,0.08)]' : 'border-transparent hover:bg-white hover:border-[#E5E5EB]'}`}
-                        >
-                          <div className="flex items-center gap-3 overflow-hidden">
-                            {isActive ? (
-                              <div className="w-1.5 h-6 bg-[#6B2BFF] rounded-r-full absolute left-0" />
-                            ) : null}
-
-                            <input type="checkbox" checked={selectedLeads.has(lead.srNo)} onChange={(e) => { e.stopPropagation(); toggleSelect(lead.srNo); }} className="w-3.5 h-3.5 rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${isActive ? 'bg-[#F3EFFF] text-[#6B2BFF]' : 'bg-[#EBEBF2] text-[#5A5A6D]'}`}>{initials}</div>
-                            <div className="overflow-hidden">
-                              <p className="text-[13px] font-bold text-[#111118] truncate pr-2">{lead.name}</p>
-                              <p className="text-[12px] font-medium text-[#7A7A8F] truncate pr-2">{lead.title} · {lead.company}</p>
-                            </div>
-                          </div>
-                          <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${lead.priority === 'High' ? 'bg-red-500' : lead.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Split Detail */}
-                <div className="flex-1 bg-white h-full overflow-auto custom-scroll p-8">
-                  {selectedLeadData ? (
-                    <div className="max-w-[700px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
-                      <div className="flex items-start justify-between mb-8">
-                        <div className="flex items-center gap-5">
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#EAE5FF] to-[#D0B8FF] flex items-center justify-center text-xl font-bold text-[#6B2BFF] border border-[#CBB8FF]">
-                            {selectedLeadData.name ? selectedLeadData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?'}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h2 className="text-2xl font-bold text-[#111118]">{selectedLeadData.name}</h2>
-                              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex items-center gap-1.5 ${badgeStyles.priority[selectedLeadData.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${selectedLeadData.priority === 'High' ? 'bg-red-500' : selectedLeadData.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
-                                {selectedLeadData.priority || 'Unknown'}
-                              </span>
-                            </div>
-                            <p className="text-[15px] font-medium text-[#5A5A6D]">{selectedLeadData.title} at <span className="font-bold text-[#111118]">{selectedLeadData.company}</span></p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button onClick={() => openComposeModal(selectedLeadData)} className="h-9 px-4 bg-[#111118] text-white rounded-lg text-[13px] font-semibold hover:bg-[#22222A] gap-2">
-                            <Send className="w-3.5 h-3.5" /> Compose Email
-                          </Button>
-                          <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><PhoneCall className="w-4 h-4" /></Button>
-                          <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><Copy className="w-4 h-4" /></Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-8">
-                        <div>
-                          <h3 className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider mb-3">Contact</h3>
-                          <div className="bg-[#FAFAFC] border border-[#E5E5EB] rounded-xl overflow-hidden divide-y divide-[#E5E5EB]">
-                            <div className="flex items-center px-4 py-3">
-                              <Mail className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
-                              <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.email}</span>
-                              <button className="text-[#A0A0B2] hover:text-[#6B2BFF]"><Copy className="w-3.5 h-3.5" /></button>
-                            </div>
-                            <div className="flex items-center px-4 py-3">
-                              <Phone className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
-                              <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.phone || '—'}</span>
-                              {selectedLeadData.phone && <button className="text-[#A0A0B2] hover:text-[#6B2BFF]"><Copy className="w-3.5 h-3.5" /></button>}
-                            </div>
-                            <div className="flex items-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                              <Globe className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
-                              {selectedLeadData.website ? (
-                                <div className="flex items-center gap-2 flex-1 overflow-hidden">
-                                  <a
-                                    href={selectedLeadData.website.startsWith('http') ? selectedLeadData.website : `https://${selectedLeadData.website}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-[14px] font-medium text-[#6B2BFF] hover:underline truncate"
-                                    title={selectedLeadData.website}
-                                  >
-                                    {selectedLeadData.website}
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden md:table-cell whitespace-nowrap">{lead.title}</td>
+                            <td className="px-3 py-3 font-semibold text-[#111118]">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <Building2 className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.company}
+                              </div>
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden lg:table-cell hover:text-[#6B2BFF] transition-colors" onClick={(e) => e.stopPropagation()}>
+                              <a href={`mailto:${lead.email}`}>{lead.email}</a>
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell" onClick={(e) => e.stopPropagation()}>
+                              {lead.website ? (
+                                <div className="flex items-center gap-1.5">
+                                  <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noreferrer" className="hover:text-[#6B2BFF] truncate max-w-[120px] inline-flex items-center gap-1" title={lead.website}>
+                                    <Globe className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="truncate">{lead.website.replace(/^https?:\/\/(www\.)?/, '')}</span>
                                   </a>
-                                  <a
-                                    href={`https://www.google.com/search?q=${encodeURIComponent(selectedLeadData.company + ' website')}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-[#A0A0B2] hover:text-[#6B2BFF] transition-colors p-0.5 inline-flex"
-                                    title="Search on Google"
-                                  >
-                                    <Search className="w-3.5 h-3.5" />
+                                  <a href={`https://www.google.com/search?q=${encodeURIComponent(lead.company + ' website')}`} target="_blank" rel="noreferrer" className="text-[#A0A0B2] hover:text-[#6B2BFF] transition-colors shrink-0 p-0.5" title="Search on Google">
+                                    <Search className="w-3 h-3" />
                                   </a>
                                 </div>
-                              ) : (
-                                <span className="text-[14px] font-medium text-[#A0A0B2] flex-1">—</span>
-                              )}
-                            </div>
-                            <div className="flex items-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                              <Linkedin className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
-                              {selectedLeadData.linkedIn ? (
-                                <a
-                                  href={selectedLeadData.linkedIn.startsWith('http') ? selectedLeadData.linkedIn : `https://${selectedLeadData.linkedIn}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-[14px] font-medium text-[#0077B5] hover:underline flex-1 truncate"
-                                  title={selectedLeadData.linkedIn}
-                                >
-                                  {selectedLeadData.linkedIn.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, 'in/')}
+                              ) : '—'}
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell" onClick={(e) => e.stopPropagation()}>
+                              {lead.linkedIn ? (
+                                <a href={lead.linkedIn.startsWith('http') ? lead.linkedIn : `https://${lead.linkedIn}`} target="_blank" rel="noreferrer" className="hover:text-[#0077B5] transition-colors truncate max-w-[150px] inline-flex items-center gap-1">
+                                  <Linkedin className="w-3.5 h-3.5" />
+                                  <span className="truncate">Profile</span>
                                 </a>
+                              ) : '—'}
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden xl:table-cell whitespace-nowrap">{lead.location}</td>
+                            <td className="px-3 py-3">
+                              <span className={`px-2 py-0.5 rounded-[4px] text-[11px] font-bold border ${sBadge}`}>{lead.segment || 'Unknown'}</span>
+                            </td>
+                            <td className="px-3 py-3">
+                              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1.5 ${pBadge}`}>
+                                <div className={`w-1.5 h-1.5 rounded-full ${lead.priority === 'High' ? 'bg-red-500' : lead.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                                {lead.priority || 'Unknown'}
+                              </span>
+                            </td>
+                            <td className="px-3 py-3 text-[#5A5A6D] hidden sm:table-cell">
+                              <div className="flex items-center gap-1.5">
+                                {lead.channel?.toLowerCase().includes('email') ? <Mail className="w-3.5 h-3.5" /> : lead.channel?.toLowerCase().includes('phone') ? <Phone className="w-3.5 h-3.5" /> : <Linkedin className="w-3.5 h-3.5" />}
+                                {lead.channel}
+                              </div>
+                            </td>
+                            <td className="px-3 py-3">
+                              {lead.email_status ? (
+                                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1 ${lead.email_status.toLowerCase() === 'sent'
+                                  ? 'bg-green-50 text-green-600 border-green-100'
+                                  : 'bg-red-50 text-red-600 border-red-100'
+                                  }`} title={lead.email_error || undefined}>
+                                  <div className={`w-1 h-1 rounded-full ${lead.email_status.toLowerCase() === 'sent' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                                  {lead.email_status.toLowerCase() === 'sent' ? 'Sent' : 'Failed'}
+                                </span>
                               ) : (
-                                <span className="text-[14px] font-medium text-[#A0A0B2] flex-1">in/{selectedLeadData.name?.toLowerCase().replace(/\s+/g, '')}</span>
+                                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold border flex w-max items-center gap-1 bg-slate-50 text-slate-500 border-slate-100">
+                                  <div className="w-1 h-1 rounded-full bg-slate-400"></div>
+                                  Unsent
+                                </span>
                               )}
+                            </td>
+                            <td className="px-3 py-3 text-right">
+                              <button className="opacity-0 group-hover:opacity-100 text-[#A0A0B2] hover:text-[#111118] transition-opacity p-1">
+                                <MoreHorizontal className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* SPLIT VIEW */}
+              {viewMode === "split" && (
+                <div className="w-full h-full flex overflow-hidden">
+                  {/* Split List */}
+                  <div className="w-[380px] shrink-0 border-r border-[#E5E5EB] bg-[#FAFAFC] flex flex-col h-full overflow-auto custom-scroll">
+                    <div className="p-3 border-b border-[#E5E5EB] flex items-center justify-between text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider sticky top-0 bg-[#FAFAFC] z-10">
+                      <span className="flex items-center gap-2"><ArrowUpDown className="w-3 h-3" /> LEADS · {filteredLeads.length}</span>
+                    </div>
+                    <div className="flex-1 p-2 flex flex-col gap-1">
+                      {paginatedLeads.map((lead) => {
+                        const isActive = selectedLeadData?.srNo === lead.srNo;
+                        const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+                        return (
+                          <div
+                            key={lead.srNo}
+                            onClick={() => setSelectedLeadData(lead)}
+                            className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-all border group ${isActive ? 'bg-white border-[#D0B8FF] shadow-[0_2px_8px_rgba(107,43,255,0.08)]' : 'border-transparent hover:bg-white hover:border-[#E5E5EB]'}`}
+                          >
+                            <div className="flex items-center gap-3 overflow-hidden">
+                              {isActive ? (
+                                <div className="w-1.5 h-6 bg-[#6B2BFF] rounded-r-full absolute left-0" />
+                              ) : null}
+
+                              <input type="checkbox" checked={selectedLeads.has(lead.srNo)} onChange={(e) => { e.stopPropagation(); toggleSelect(lead.srNo); }} className="w-3.5 h-3.5 rounded-[4px] border-[#D2D2E0] text-[#6B2BFF] opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${isActive ? 'bg-[#F3EFFF] text-[#6B2BFF]' : 'bg-[#EBEBF2] text-[#5A5A6D]'}`}>{initials}</div>
+                              <div className="overflow-hidden">
+                                <p className="text-[13px] font-bold text-[#111118] truncate pr-2">{lead.name}</p>
+                                <p className="text-[12px] font-medium text-[#7A7A8F] truncate pr-2">{lead.title} · {lead.company}</p>
+                              </div>
                             </div>
-                            <div className="flex items-center px-4 py-3">
-                              <MapPin className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
-                              <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.location || '—'}</span>
+                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${lead.priority === 'High' ? 'bg-red-500' : lead.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Split Detail */}
+                  <div className="flex-1 bg-white h-full overflow-auto custom-scroll p-8">
+                    {selectedLeadData ? (
+                      <div className="max-w-[700px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
+                        <div className="flex items-start justify-between mb-8">
+                          <div className="flex items-center gap-5">
+                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#EAE5FF] to-[#D0B8FF] flex items-center justify-center text-xl font-bold text-[#6B2BFF] border border-[#CBB8FF]">
+                              {selectedLeadData.name ? selectedLeadData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?'}
                             </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <h2 className="text-2xl font-bold text-[#111118]">{selectedLeadData.name}</h2>
+                                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex items-center gap-1.5 ${badgeStyles.priority[selectedLeadData.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
+                                  <div className={`w-1.5 h-1.5 rounded-full ${selectedLeadData.priority === 'High' ? 'bg-red-500' : selectedLeadData.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                                  {selectedLeadData.priority || 'Unknown'}
+                                </span>
+                              </div>
+                              <p className="text-[15px] font-medium text-[#5A5A6D]">{selectedLeadData.title} at <span className="font-bold text-[#111118]">{selectedLeadData.company}</span></p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button onClick={() => openComposeModal(selectedLeadData)} className="h-9 px-4 bg-[#111118] text-white rounded-lg text-[13px] font-semibold hover:bg-[#22222A] gap-2">
+                              <Send className="w-3.5 h-3.5" /> Compose Email
+                            </Button>
+                            <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><PhoneCall className="w-4 h-4" /></Button>
+                            <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><Copy className="w-4 h-4" /></Button>
                           </div>
                         </div>
 
-                        <div>
-                          <h3 className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider mb-3">Classification</h3>
-                          <div className="bg-[#FAFAFC] border border-[#E5E5EB] rounded-xl overflow-hidden divide-y divide-[#E5E5EB]">
-                            <div className="flex items-center px-4 py-3">
-                              <span className="text-[13px] font-medium text-[#7A7A8F] w-24 shrink-0">Segment</span>
-                              <span className={`px-2 py-0.5 rounded-[4px] text-[12px] font-bold border ${badgeStyles.segment[selectedLeadData.segment as keyof typeof badgeStyles.segment] || "bg-slate-50 text-slate-600 border-slate-100"}`}>{selectedLeadData.segment || 'Unknown'}</span>
+                        <div className="space-y-8">
+                          <div>
+                            <h3 className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider mb-3">Contact</h3>
+                            <div className="bg-[#FAFAFC] border border-[#E5E5EB] rounded-xl overflow-hidden divide-y divide-[#E5E5EB]">
+                              <div className="flex items-center px-4 py-3">
+                                <Mail className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
+                                <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.email}</span>
+                                <button className="text-[#A0A0B2] hover:text-[#6B2BFF]"><Copy className="w-3.5 h-3.5" /></button>
+                              </div>
+                              <div className="flex items-center px-4 py-3">
+                                <Phone className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
+                                <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.phone || '—'}</span>
+                                {selectedLeadData.phone && <button className="text-[#A0A0B2] hover:text-[#6B2BFF]"><Copy className="w-3.5 h-3.5" /></button>}
+                              </div>
+                              <div className="flex items-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                                <Globe className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
+                                {selectedLeadData.website ? (
+                                  <div className="flex items-center gap-2 flex-1 overflow-hidden">
+                                    <a
+                                      href={selectedLeadData.website.startsWith('http') ? selectedLeadData.website : `https://${selectedLeadData.website}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-[14px] font-medium text-[#6B2BFF] hover:underline truncate"
+                                      title={selectedLeadData.website}
+                                    >
+                                      {selectedLeadData.website}
+                                    </a>
+                                    <a
+                                      href={`https://www.google.com/search?q=${encodeURIComponent(selectedLeadData.company + ' website')}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-[#A0A0B2] hover:text-[#6B2BFF] transition-colors p-0.5 inline-flex"
+                                      title="Search on Google"
+                                    >
+                                      <Search className="w-3.5 h-3.5" />
+                                    </a>
+                                  </div>
+                                ) : (
+                                  <span className="text-[14px] font-medium text-[#A0A0B2] flex-1">—</span>
+                                )}
+                              </div>
+                              <div className="flex items-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                                <Linkedin className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
+                                {selectedLeadData.linkedIn ? (
+                                  <a
+                                    href={selectedLeadData.linkedIn.startsWith('http') ? selectedLeadData.linkedIn : `https://${selectedLeadData.linkedIn}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-[14px] font-medium text-[#0077B5] hover:underline flex-1 truncate"
+                                    title={selectedLeadData.linkedIn}
+                                  >
+                                    {selectedLeadData.linkedIn.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, 'in/')}
+                                  </a>
+                                ) : (
+                                  <span className="text-[14px] font-medium text-[#A0A0B2] flex-1">in/{selectedLeadData.name?.toLowerCase().replace(/\s+/g, '')}</span>
+                                )}
+                              </div>
+                              <div className="flex items-center px-4 py-3">
+                                <MapPin className="w-4 h-4 text-[#A0A0B2] w-24 shrink-0" />
+                                <span className="text-[14px] font-medium text-[#111118] flex-1">{selectedLeadData.location || '—'}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center px-4 py-3">
-                              <span className="text-[13px] font-medium text-[#7A7A8F] w-24 shrink-0">Priority</span>
-                              <span className={`px-2 py-0.5 rounded-full text-[12px] font-bold border flex w-max items-center gap-1.5 ${badgeStyles.priority[selectedLeadData.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${selectedLeadData.priority === 'High' ? 'bg-red-500' : selectedLeadData.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
-                                {selectedLeadData.priority || 'Unknown'}
-                              </span>
+                          </div>
+
+                          <div>
+                            <h3 className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider mb-3">Classification</h3>
+                            <div className="bg-[#FAFAFC] border border-[#E5E5EB] rounded-xl overflow-hidden divide-y divide-[#E5E5EB]">
+                              <div className="flex items-center px-4 py-3">
+                                <span className="text-[13px] font-medium text-[#7A7A8F] w-24 shrink-0">Segment</span>
+                                <span className={`px-2 py-0.5 rounded-[4px] text-[12px] font-bold border ${badgeStyles.segment[selectedLeadData.segment as keyof typeof badgeStyles.segment] || "bg-slate-50 text-slate-600 border-slate-100"}`}>{selectedLeadData.segment || 'Unknown'}</span>
+                              </div>
+                              <div className="flex items-center px-4 py-3">
+                                <span className="text-[13px] font-medium text-[#7A7A8F] w-24 shrink-0">Priority</span>
+                                <span className={`px-2 py-0.5 rounded-full text-[12px] font-bold border flex w-max items-center gap-1.5 ${badgeStyles.priority[selectedLeadData.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
+                                  <div className={`w-1.5 h-1.5 rounded-full ${selectedLeadData.priority === 'High' ? 'bg-red-500' : selectedLeadData.priority === 'Medium' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                                  {selectedLeadData.priority || 'Unknown'}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-[#A0A0B2] text-[13px]">Select a lead to view details</div>
-                  )}
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-[#A0A0B2] text-[13px]">Select a lead to view details</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* CARDS VIEW */}
+              {viewMode === "cards" && (
+                <motion.div
+                  initial="hidden" animate="visible"
+                  variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
+                  className="w-full h-full overflow-auto custom-scroll p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 bg-transparent"
+                >
+                  {paginatedLeads.map((lead) => {
+                    const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+                    return (
+                      <motion.div
+                        key={lead.srNo}
+                        variants={{ hidden: { opacity: 0, y: 15, scale: 0.98 }, visible: { opacity: 1, y: 0, scale: 1 } }}
+                        whileHover={{ y: -6 }}
+                        className="bg-white rounded-[20px] border border-[#EDEDF4] shadow-sm hover:shadow-[0_16px_40px_rgb(107,43,255,0.08)] hover:border-[#6B2BFF]/30 transition-shadow duration-300 p-5 flex flex-col group relative overflow-hidden"
+                      >
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-transparent to-[#6B2BFF]/5 rounded-full blur-2xl pointer-events-none group-hover:to-[#6B2BFF]/10 transition-colors" />
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 shadow-sm ${badgeStyles.priority[lead.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
+                            {lead.priority}
+                          </span>
+                        </div>
+                        <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-[13px] font-bold bg-gradient-to-br from-[#F3EFFF] to-[#E5DBFF] text-[#6B2BFF] mb-5 shadow-sm shadow-[#6B2BFF]/10 border border-[#D0B8FF]/30">
+                          {initials}
+                        </div>
+                        <h3 className="text-[16px] font-bold text-[#111118] line-clamp-1 group-hover:text-[#6B2BFF] transition-colors relative z-10">{lead.name}</h3>
+                        <p className="text-[13px] font-medium text-[#7A7A8F] mb-5 line-clamp-1 relative z-10">{lead.title}</p>
+
+                        <div className="bg-[#FAFAFC]/80 backdrop-blur-sm rounded-xl p-3 border border-[#E5E5EB]/60 mb-5 relative z-10">
+                          <div className="flex items-center gap-2 text-[12px] font-medium text-[#111118] mb-2 line-clamp-1">
+                            <Building2 className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.company}
+                          </div>
+                          <div className="flex items-center gap-2 text-[12px] text-[#5A5A6D] line-clamp-1">
+                            <MapPin className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.location}
+                          </div>
+                        </div>
+
+                        <div className="mt-auto flex items-center justify-between pt-3 border-t border-[#E5E5EB]/60 relative z-10">
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => openComposeModal(lead)} className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F3EFFF] hover:text-[#6B2BFF] transition-colors"><Mail className="w-4 h-4" /></button>
+                            <button className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F0F7FA] hover:text-[#0077B5] transition-colors"><Linkedin className="w-4 h-4" /></button>
+                          </div>
+                          <Button onClick={() => openComposeModal(lead)} className="h-9 px-4 text-[13px] bg-[#111118] text-white font-semibold rounded-lg hover:bg-[#6B2BFF] shadow-sm transition-colors group/btn overflow-hidden relative">
+                            <span className="relative z-10 flex items-center gap-2">Reach out <Send className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" /></span>
+                          </Button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
+
+              {/* EXPAND VIEW placeholder */}
+              {viewMode === "expand" && (
+                <div className="flex items-center justify-center h-full text-[#A0A0B2]">Expand view mode matches table but with more columns (implemented using standard Table). Switching back to Table.</div>
+              )}
+            </div>
+
+            {/* Pagination Bar */}
+            {filteredLeads.length > 0 && (
+              <div className="shrink-0 flex items-center justify-between border-t border-[#E5E5EB] px-6 py-4 bg-[#FAFAFD]/60 backdrop-blur-md">
+                <div className="text-[13px] font-medium text-[#7A7A8F]">
+                  Showing <span className="font-bold text-[#111118]">{Math.min(filteredLeads.length, (currentPage - 1) * itemsPerPage + 1)}</span> to{" "}
+                  <span className="font-bold text-[#111118]">{Math.min(filteredLeads.length, currentPage * itemsPerPage)}</span> of{" "}
+                  <span className="font-bold text-[#111118]">{filteredLeads.length}</span> leads
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    className="h-8 px-3 border-[#E5E5EB] hover:bg-[#FAFAFD] text-[#5A5A6D] hover:text-[#111118] rounded-lg text-[12px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap bg-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+                    Previous
+                  </Button>
+                  <div className="text-[12px] font-semibold text-[#5A5A6D] px-2">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    className="h-8 px-3 border-[#E5E5EB] hover:bg-[#FAFAFD] text-[#5A5A6D] hover:text-[#111118] rounded-lg text-[12px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap bg-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Next
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               </div>
             )}
-
-            {/* CARDS VIEW */}
-            {viewMode === "cards" && (
-              <motion.div
-                initial="hidden" animate="visible"
-                variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
-                className="w-full h-full overflow-auto custom-scroll p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 bg-transparent"
-              >
-                {paginatedLeads.map((lead) => {
-                  const initials = lead.name ? lead.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
-                  return (
-                    <motion.div
-                      key={lead.srNo}
-                      variants={{ hidden: { opacity: 0, y: 15, scale: 0.98 }, visible: { opacity: 1, y: 0, scale: 1 } }}
-                      whileHover={{ y: -6 }}
-                      className="bg-white rounded-[20px] border border-[#EDEDF4] shadow-sm hover:shadow-[0_16px_40px_rgb(107,43,255,0.08)] hover:border-[#6B2BFF]/30 transition-shadow duration-300 p-5 flex flex-col group relative overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-transparent to-[#6B2BFF]/5 rounded-full blur-2xl pointer-events-none group-hover:to-[#6B2BFF]/10 transition-colors" />
-                      <div className="absolute top-4 right-4 z-10">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 shadow-sm ${badgeStyles.priority[lead.priority as keyof typeof badgeStyles.priority] || "bg-slate-50 text-slate-600 border-slate-100"}`}>
-                          {lead.priority}
-                        </span>
-                      </div>
-                      <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-[13px] font-bold bg-gradient-to-br from-[#F3EFFF] to-[#E5DBFF] text-[#6B2BFF] mb-5 shadow-sm shadow-[#6B2BFF]/10 border border-[#D0B8FF]/30">
-                        {initials}
-                      </div>
-                      <h3 className="text-[16px] font-bold text-[#111118] line-clamp-1 group-hover:text-[#6B2BFF] transition-colors relative z-10">{lead.name}</h3>
-                      <p className="text-[13px] font-medium text-[#7A7A8F] mb-5 line-clamp-1 relative z-10">{lead.title}</p>
-
-                      <div className="bg-[#FAFAFC]/80 backdrop-blur-sm rounded-xl p-3 border border-[#E5E5EB]/60 mb-5 relative z-10">
-                        <div className="flex items-center gap-2 text-[12px] font-medium text-[#111118] mb-2 line-clamp-1">
-                          <Building2 className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.company}
-                        </div>
-                        <div className="flex items-center gap-2 text-[12px] text-[#5A5A6D] line-clamp-1">
-                          <MapPin className="w-3.5 h-3.5 text-[#A0A0B2]" /> {lead.location}
-                        </div>
-                      </div>
-
-                      <div className="mt-auto flex items-center justify-between pt-3 border-t border-[#E5E5EB]/60 relative z-10">
-                        <div className="flex items-center gap-1.5">
-                          <button onClick={() => openComposeModal(lead)} className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F3EFFF] hover:text-[#6B2BFF] transition-colors"><Mail className="w-4 h-4" /></button>
-                          <button className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F0F7FA] hover:text-[#0077B5] transition-colors"><Linkedin className="w-4 h-4" /></button>
-                        </div>
-                        <Button onClick={() => openComposeModal(lead)} className="h-9 px-4 text-[13px] bg-[#111118] text-white font-semibold rounded-lg hover:bg-[#6B2BFF] shadow-sm transition-colors group/btn overflow-hidden relative">
-                          <span className="relative z-10 flex items-center gap-2">Reach out <Send className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" /></span>
-                        </Button>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            )}
-
-            {/* EXPAND VIEW placeholder */}
-            {viewMode === "expand" && (
-              <div className="flex items-center justify-center h-full text-[#A0A0B2]">Expand view mode matches table but with more columns (implemented using standard Table). Switching back to Table.</div>
-            )}
-          </div>
-          
-          {/* Pagination Bar */}
-        {filteredLeads.length > 0 && (
-          <div className="shrink-0 flex items-center justify-between border-t border-[#E5E5EB] px-6 py-4 bg-[#FAFAFD]/60 backdrop-blur-md">
-            <div className="text-[13px] font-medium text-[#7A7A8F]">
-              Showing <span className="font-bold text-[#111118]">{Math.min(filteredLeads.length, (currentPage - 1) * itemsPerPage + 1)}</span> to{" "}
-              <span className="font-bold text-[#111118]">{Math.min(filteredLeads.length, currentPage * itemsPerPage)}</span> of{" "}
-              <span className="font-bold text-[#111118]">{filteredLeads.length}</span> leads
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                className="h-8 px-3 border-[#E5E5EB] hover:bg-[#FAFAFD] text-[#5A5A6D] hover:text-[#111118] rounded-lg text-[12px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap bg-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                Previous
-              </Button>
-              <div className="text-[12px] font-semibold text-[#5A5A6D] px-2">
-                Page {currentPage} of {totalPages}
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                className="h-8 px-3 border-[#E5E5EB] hover:bg-[#FAFAFD] text-[#5A5A6D] hover:text-[#111118] rounded-lg text-[12px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap bg-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-              >
-                Next
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
-        )}
           </>
         )}
       </div>
