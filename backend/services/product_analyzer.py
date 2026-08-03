@@ -1,0 +1,93 @@
+import os
+import json
+import logging
+from typing import Dict, Any, List
+from anthropic import Anthropic
+
+logger = logging.getLogger(__name__)
+
+async def analyze_product(
+    division: str,
+    product_name: str,
+    brand: str = "Not Specified",
+    description: str = "Not Specified"
+) -> Dict[str, Any]:
+    """
+    Analyzes the product using Claude Haiku 4.5 to extract keywords, industries, competitors, and buyer types.
+    """
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError("ANTHROPIC_API_KEY is not defined in the environment.")
+
+    # Initialize client (uses httpx under the hood, synchronous client is standard, or AsyncAnthropic can be used)
+    # Since we are inside an async function, let's use AsyncAnthropic for non-blocking I/O!
+    from anthropic import AsyncAnthropic
+    client = AsyncAnthropic(api_key=api_key)
+
+    prompt = f"""Act as an expert B2B product researcher and market analyst specializing in the Middle East / GCC market.
+Analyze the following product/service details to help us find high-quality sales leads:
+
+- Division: {division or 'Not Specified'}
+- Product Name: {product_name}
+- Brand: {brand or 'Not Specified'}
+- Description: {description or 'Not Specified'}
+
+Based on this information, determine the following:
+1. Industry (e.g. Automotive Chemicals, Industrial Equipment)
+2. Sub Industry
+3. Product Category
+4. Buyer Types (e.g. workshops, fleet companies, auto parts distributors)
+5. Competitor Brands (e.g. STP, Liqui Moly)
+6. Search Keywords (specific search terms to find suppliers, distributors, wholesalers, or buyers of this product type in UAE/GCC, e.g. "fuel additive distributor UAE", "octane booster supplier Dubai")
+7. Alternative Search Terms (e.g. "automotive chemical wholesaler GCC")
+
+You MUST return the output strictly as a JSON object matching the format below.
+Do not include any wrapper (like markdown code blocks ```json), comments, or introductory text. Return ONLY the raw JSON string.
+
+JSON format:
+{{
+  "industry": "Industry name",
+  "subIndustry": "Sub Industry name",
+  "productCategory": "Product Category name",
+  "buyerTypes": ["Buyer Type 1", "Buyer Type 2"],
+  "competitorBrands": ["Brand 1", "Brand 2"],
+  "competitors": ["Brand 1", "Brand 2"],
+  "searchKeywords": ["Keyword 1", "Keyword 2"],
+  "keywords": ["Keyword 1", "Keyword 2"],
+  "alternativeSearchTerms": ["Alternative Term 1", "Alternative Term 2"]
+}}"""
+
+    try:
+        response = await client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=2000,
+            system="You are a precise B2B market intelligence data extraction assistant. You only output valid raw JSON.",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+        )
+
+        text = ""
+        if response.content and len(response.content) > 0:
+            text = response.content[0].text.strip()
+
+        if not text:
+            raise ValueError("Empty response from Anthropic Claude API")
+
+        # Clean markdown code block wraps if present
+        if text.startswith("```json"):
+            text = text[7:]
+        elif text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+
+        parsed = json.loads(text)
+        return parsed
+    except Exception as e:
+        logger.error(f"Error in product analyzer service: {e}")
+        raise e

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+asyncpg
+python-multipart
+pandas
+openpyxl
+python-dotenv
+pydantic
+anthropic
+httpx
