@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { API_BASE_URL } from "../apiConfig";
 
 export const badgeStyles = {
   priority: {
@@ -230,7 +231,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
 
   useEffect(() => {
     if (selectedCategory) {
-      fetch(`/api/product-service-types?category=${selectedCategory}`)
+      fetch(`${API_BASE_URL}/api/product-service-types?category=${selectedCategory}`)
         .then(res => res.json())
         .then(data => setCategoryTypes(data.types || []))
         .catch(console.error);
@@ -247,7 +248,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
 
   useEffect(() => {
     if (selectedType && selectedCategory) {
-      fetch(`/api/product-service-names?typeId=${selectedType}&category=${selectedCategory}`)
+      fetch(`${API_BASE_URL}/api/product-service-names?typeId=${selectedType}&category=${selectedCategory}`)
         .then(res => res.json())
         .then(data => setServiceNames(data.names || []))
         .catch(console.error);
@@ -292,9 +293,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
   // Helper to call generate leads API and consume the SSE stream synchronously for file upload
   const callGenerateLeadsApi = async (payload: any): Promise<Lead[]> => {
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    const response = await fetch(`${API_URL}/api/generate-leads`, {
+    const response = await fetch(`${API_BASE_URL}/api/generate-leads`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -380,7 +379,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
         };
       }
 
-      const response = await fetch("/api/generate-leads", {
+      const response = await fetch(`${API_BASE_URL}/api/generate-leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -454,7 +453,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
     setGenerationStats(null);
     setLeads([]);
     try {
-      const response = await fetch("/api/upload-file", {
+      const response = await fetch(`${API_BASE_URL}/api/upload-file`, {
         method: "POST",
         body: formData,
       });

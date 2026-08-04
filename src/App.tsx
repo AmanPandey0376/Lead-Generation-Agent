@@ -11,6 +11,7 @@ import * as XLSX from "xlsx";
 
 import { GenerateLeads } from "./components/GenerateLeads";
 import { EmailOutreach } from "./components/EmailOutreach";
+import { API_BASE_URL } from "./apiConfig";
 
 export default function App() {
   const [savingDB, setSavingDB] = useState(false);
@@ -63,7 +64,7 @@ export default function App() {
 
   const fetchTemplates = async () => {
     try {
-      const res = await fetch("/api/email-templates");
+      const res = await fetch(`${API_BASE_URL}/api/email-templates`);
       const data = await res.json();
       setTemplates(data.templates || []);
     } catch (e) {
@@ -80,7 +81,7 @@ export default function App() {
     setSmtpStatus("idle");
     setSmtpError("");
     try {
-      const res = await fetch("/api/test-smtp", { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/test-smtp`, { method: "POST" });
       const data = await res.json();
       if (data.status === "success") {
         setSmtpStatus("success");
@@ -105,7 +106,7 @@ export default function App() {
       return;
     }
     try {
-      const res = await fetch("/api/email-templates", {
+      const res = await fetch(`${API_BASE_URL}/api/email-templates`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,7 +134,7 @@ export default function App() {
     e.stopPropagation();
     if (!confirm("Are you sure you want to delete this template?")) return;
     try {
-      const res = await fetch(`/api/email-templates/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/api/email-templates/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
         toast.success("Template deleted!");
@@ -219,7 +220,7 @@ export default function App() {
       .replace(/{title}/g, lead.title || "");
 
     try {
-      const res = await fetch("/api/send-email", {
+      const res = await fetch(`${API_BASE_URL}/api/send-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -332,7 +333,7 @@ export default function App() {
     setProgressMessage("Initiating bulk emails...");
 
     try {
-      const response = await fetch("/api/send-bulk-email", {
+      const response = await fetch(`${API_BASE_URL}/api/send-bulk-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyPayload)
@@ -485,7 +486,7 @@ export default function App() {
     if (leads.length === 0) return;
     setSavingDB(true);
     try {
-      const response = await fetch("/api/save-leads", {
+      const response = await fetch(`${API_BASE_URL}/api/save-leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

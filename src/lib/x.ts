@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { API_BASE_URL } from "../apiConfig";
 
 const xai = new OpenAI({
     apiKey: process.env.XAI_API_KEY || "",
@@ -147,7 +148,7 @@ Minimum Leads Required: 30–50`;
 
         // Filter against existing PostgreSQL database leads to avoid duplicates
         try {
-            const filterResponse = await fetch("/api/filter-existing-leads", {
+            const filterResponse = await fetch(`${API_BASE_URL}/api/filter-existing-leads`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ leads: rawLeads })

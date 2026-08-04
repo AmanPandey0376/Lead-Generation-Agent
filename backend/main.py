@@ -53,6 +53,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://leadgenerationagent.vercel.app",
+        "https://lead-generation-agent-two.vercel.app",
         "http://localhost:5173",
     ],
     allow_credentials=True,
