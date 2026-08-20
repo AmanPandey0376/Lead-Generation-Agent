@@ -566,7 +566,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
       {/* 2. TARGET PARAMETERS BAR */}
       <motion.div
         initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: "easeOut" }}
-        className="bg-white/70 backdrop-blur-xl rounded-2xl border border-[#EDEDF4]/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 shrink-0 flex flex-col gap-5 relative overflow-visible z-30"
+        className="bg-white/90 backdrop-blur-md rounded-2xl border border-[#EDEDF4]/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 shrink-0 flex flex-col gap-5 relative overflow-visible z-30"
       >
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#6B2BFF]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -597,7 +597,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
         {inputMode === "manual" ? (
           <form onSubmit={handleManualSubmit} className="flex flex-col gap-4 w-full">
             {/* DROPDOWNS ROW */}
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 flex flex-col gap-1.5">
                 <Label className="text-[12px] font-semibold text-[#5A5A6D]">Category</Label>
                 <FormSelect
@@ -732,7 +732,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
             )}
 
             {/* BUTTONS CONTAINER ALIGNED BOTTOM-RIGHT */}
-            <div className="flex justify-end items-center gap-2 w-full mt-2">
+            <div className="flex flex-wrap justify-end items-center gap-2 w-full mt-2">
               {showRefresh && leads.length > 0 && (
                 <Button
                   type="button"
@@ -848,17 +848,17 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
       </motion.div>
 
       {/* 4. FILTER / TOOLBAR */}
-      <div className="shrink-0 flex items-center justify-between border-b border-[#E5E5EB] pb-4 sticky top-0 bg-[#FAFAFC]/90 backdrop-blur-md pt-2 z-20">
+      <div className="shrink-0 flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#E5E5EB] pb-4 sticky top-0 bg-[#FAFAFC]/95 backdrop-blur-sm pt-2 z-20 gap-3 will-change-transform">
         {selectedLeads.size > 0 ? (
           // Bulk Actions Toolbar
-          <div className="flex items-center justify-between w-full animate-in fade-in zoom-in duration-200">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-3 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center gap-3 flex-wrap">
               <div className="bg-[#6B2BFF]/10 text-[#6B2BFF] text-[12px] font-bold px-2 py-0.5 rounded-[4px]">
                 {selectedLeads.size} selected
               </div>
               <span className="text-[13px] font-medium text-[#7A7A8F]">Apply action to selected leads:</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {selectedLeads.size === 1 ? (
                 <Button onClick={() => {
                   const srNo = Array.from(selectedLeads)[0];
@@ -894,7 +894,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
         ) : (
           // Standard Toolbar
           <>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <div className="flex bg-white rounded-lg p-0.5 border border-[#EDEDF4] shadow-sm">
                 {[
                   { id: "table", icon: LayoutList, label: "Table" },
@@ -927,7 +927,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <div className="hidden lg:flex items-center gap-2">
                 <FilterSelect
                   label="Location"
@@ -1002,7 +1002,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
       )}
 
       {/* 5. DYNAMIC VIEWS */}
-      <div className="h-[calc(100vh-380px)] min-h-[480px] bg-white/60 backdrop-blur-md rounded-2xl border border-[#EDEDF4]/80 shadow-[0_4px_24px_rgb(0,0,0,0.02)] overflow-hidden flex flex-col relative">
+      <div className="h-[calc(100vh-380px)] min-h-[480px] bg-white/85 backdrop-blur-sm rounded-2xl border border-[#EDEDF4]/80 shadow-[0_4px_24px_rgb(0,0,0,0.02)] overflow-hidden flex flex-col relative transform-gpu">
 
         {leads.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-10">
@@ -1138,9 +1138,9 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
 
               {/* SPLIT VIEW */}
               {viewMode === "split" && (
-                <div className="w-full h-full flex overflow-hidden">
+                <div className="w-full h-full flex flex-col lg:flex-row overflow-hidden">
                   {/* Split List */}
-                  <div className="w-[380px] shrink-0 border-r border-[#E5E5EB] bg-[#FAFAFC] flex flex-col h-full overflow-auto custom-scroll">
+                  <div className="w-full lg:w-[380px] h-[250px] lg:h-full shrink-0 border-b lg:border-b-0 lg:border-r border-[#E5E5EB] bg-[#FAFAFC] flex flex-col overflow-auto custom-scroll">
                     <div className="p-3 border-b border-[#E5E5EB] flex items-center justify-between text-[11px] font-bold text-[#8A8AA3] uppercase tracking-wider sticky top-0 bg-[#FAFAFC] z-10">
                       <span className="flex items-center gap-2"><ArrowUpDown className="w-3 h-3" /> LEADS · {filteredLeads.length}</span>
                     </div>
@@ -1177,7 +1177,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
                   <div className="flex-1 bg-white h-full overflow-auto custom-scroll p-8">
                     {selectedLeadData ? (
                       <div className="max-w-[700px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
-                        <div className="flex items-start justify-between mb-8">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
                           <div className="flex items-center gap-5">
                             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#EAE5FF] to-[#D0B8FF] flex items-center justify-center text-xl font-bold text-[#6B2BFF] border border-[#CBB8FF]">
                               {selectedLeadData.name ? selectedLeadData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?'}
@@ -1193,7 +1193,7 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
                               <p className="text-[15px] font-medium text-[#5A5A6D]">{selectedLeadData.title} at <span className="font-bold text-[#111118]">{selectedLeadData.company}</span></p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <Button onClick={() => openComposeModal(selectedLeadData)} className="h-9 px-4 bg-[#111118] text-white rounded-lg text-[13px] font-semibold hover:bg-[#22222A] gap-2">
                               <Send className="w-3.5 h-3.5" /> Compose Email
                             </Button>

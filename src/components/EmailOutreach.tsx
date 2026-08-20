@@ -71,12 +71,12 @@ export function EmailOutreach({ outreachLeads, setOutreachLeads, setActiveTab, l
         </div>
       ) : (
         <div className="w-full h-full flex flex-col gap-6">
-          <div className="flex items-center justify-between shrink-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0">
             <div>
               <h2 className="text-xl font-bold text-[#111118]">Outreach Queue ({outreachLeads.length})</h2>
               <p className="text-[13px] text-[#7A7A8F] font-medium">Outreach emails are sent securely using FastAPI SMTP.</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Button
                 onClick={() => {
                   const validLeads = outreachLeads.filter(l => l.email);

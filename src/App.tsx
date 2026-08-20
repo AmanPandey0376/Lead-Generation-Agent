@@ -5,14 +5,12 @@ import { type Lead } from "@/src/lib/groq";
 import { toast, Toaster } from "sonner";
 import {
   Loader2, Search, Mail, Command, Database, FolderDown, Sparkles, Settings,
-  Send, X, AlertCircle, Trash2, ChevronDown, Building2, MapPin, Linkedin, Phone, Globe, Copy
+  Send, X, AlertCircle, Trash2, ChevronDown, Building2, MapPin, Linkedin, Phone, Globe, Copy, Menu
 } from "lucide-react";
 import * as XLSX from "xlsx";
-
 import { GenerateLeads } from "./components/GenerateLeads";
 import { EmailOutreach } from "./components/EmailOutreach";
 import { API_BASE_URL } from "./apiConfig";
-
 export default function App() {
   const [savingDB, setSavingDB] = useState(false);
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -20,7 +18,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"generate" | "outreach">("generate");
   const [selectedLeads, setSelectedLeads] = useState<Set<number>>(new Set());
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Gmail SMTP & Outreach State
   const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -75,6 +73,18 @@ export default function App() {
   useEffect(() => {
     fetchTemplates();
   }, []);
+
+  // Lock body scroll when mobile sidebar drawer is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
 
   const handleTestSmtp = async () => {
     setSmtpChecking(true);
@@ -524,50 +534,70 @@ export default function App() {
     <div className="min-h-screen text-[#1A1A24] font-medium font-sans selection:bg-[#6B2BFF]/20 flex flex-col items-stretch overflow-hidden bg-[#FAFAFD] relative">
       <Toaster position="top-right" />
 
-      {/* Background grain texture injected into global or container */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
-
-      {/* Abstract blurred background blobs with slow animations */}
-      <motion.div
-        animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#6B2BFF]/15 rounded-full blur-[120px] pointer-events-none"
+      {/* Abstract blurred background blobs (optimized static layers for smooth 60fps scroll) */}
+      <div
+        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#6B2BFF]/10 rounded-full blur-[100px] pointer-events-none will-change-[transform,filter]"
       />
-      <motion.div
-        animate={{ x: [0, -40, 0], y: [0, -50, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#A880FF]/15 rounded-full blur-[120px] pointer-events-none"
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#A880FF]/10 rounded-full blur-[100px] pointer-events-none will-change-[transform,filter]"
       />
 
       {/* 1. TOP NAVBAR */}
-      <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b border-[#E8E8F2] w-full px-6 py-3 flex items-center justify-between shrink-0">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E8E8F2] w-full px-6 py-3 flex items-center justify-between shrink-0 will-change-transform">
         <div className="flex items-center gap-3">
+          {/* Mobile Sidebar Hamburger Menu Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-1.5 -ml-1 rounded-lg hover:bg-slate-100 text-[#5A5A6D] md:hidden transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6B2BFF] to-[#8C5DFF] flex items-center justify-center shadow-sm">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
             <h1 className="text-[15px] font-bold text-[#111118] leading-tight">LeadGen AI</h1>
-            <p className="text-[11px] font-medium text-[#7A7A8F] tracking-wide uppercase">Intelligence Grid — v2.4</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 justify-end">
           <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6B2BFF] to-[#D0B8FF] flex items-center justify-center text-[10px] font-bold text-white border-2 border-white shadow-sm">
-            AR
+            BB
           </div>
         </div>
       </header>
 
       {/* Body with Sidebar and Main */}
       <div className="flex-1 flex overflow-hidden z-10 relative mt-0.5">
+        {/* Sidebar mobile overlay backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-[#111118]/40 backdrop-blur-sm z-40 md:hidden animate-in fade-in duration-200"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* SIDEBAR */}
-        <aside className="w-[260px] bg-white/40 backdrop-blur-3xl border-r border-[#E8E8F2]/60 p-5 flex flex-col gap-2 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-          <div className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-widest mb-4 px-2">Navigation</div>
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-[260px] bg-white md:bg-white/80 md:backdrop-blur-md border-r border-[#E8E8F2]/60 p-5 flex flex-col gap-2 shrink-0 shadow-2xl md:shadow-[4px_0_24px_rgba(0,0,0,0.02)] md:static md:translate-x-0 transition-transform duration-300 ease-in-out will-change-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center justify-between mb-4 px-2">
+            <span className="text-[11px] font-bold text-[#8A8AA3] uppercase tracking-widest">Navigation</span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-1 rounded-md hover:bg-slate-100 text-[#5A5A6D] md:hidden transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => {
+              setSidebarOpen(false);
               if (activeTab === "outreach" && outreachLeads.length > 0) {
                 setShowLeaveConfirm(true);
               } else {
@@ -578,17 +608,20 @@ export default function App() {
             className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-300 relative overflow-hidden ${activeTab === "generate" ? "bg-[#111118] text-white shadow-md shadow-[#111118]/20" : "text-[#5A5A6D] hover:bg-white hover:shadow-sm"}`}
           >
             {activeTab === "generate" && <motion.div layoutId="sidebar-active" className="absolute inset-0 bg-[#111118] -z-10" />}
-            <Search className="w-4 h-4" /> 1. Generate Leads
+            <Search className="w-4 h-4" /> Generate Leads
           </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setActiveTab("outreach")}
+            onClick={() => {
+              setSidebarOpen(false);
+              setActiveTab("outreach");
+            }}
             className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-300 relative overflow-hidden ${activeTab === "outreach" ? "bg-[#111118] text-white shadow-md shadow-[#111118]/20" : "text-[#5A5A6D] hover:bg-white hover:shadow-sm"}`}
           >
             {activeTab === "outreach" && <motion.div layoutId="sidebar-active" className="absolute inset-0 bg-[#111118] -z-10" />}
-            <Mail className="w-4 h-4" /> 2. Email Outreach
+            <Mail className="w-4 h-4" /> Email Outreach
           </motion.button>
         </aside>
 
@@ -838,7 +871,7 @@ export default function App() {
                     </div>
 
                     {/* Right Pane - Config & Preview */}
-                    <div className="lg:col-span-2 flex flex-col gap-5 border-l border-[#EBEBF2] lg:pl-6">
+                    <div className="lg:col-span-2 flex flex-col gap-5 border-t lg:border-t-0 pt-6 lg:pt-0 border-[#EBEBF2] lg:border-l lg:pl-6">
                       {/* Connection Test */}
                       <div className="bg-[#FAFAFD] border border-[#EDEDF4] rounded-xl p-4 shadow-sm flex flex-col gap-3">
                         <div className="flex items-center justify-between">
@@ -928,7 +961,7 @@ export default function App() {
 
               {/* Footer */}
               {!sendingProgress && !sendStats && (
-                <div className="px-6 py-4 border-t border-[#EBEBF2] bg-[#FAFAFD] flex justify-end gap-2 shrink-0">
+                <div className="px-6 py-4 border-t border-[#EBEBF2] bg-[#FAFAFD] flex flex-wrap justify-end gap-2 shrink-0">
                   <button
                     onClick={() => setEmailModalOpen(false)}
                     className="h-10 px-4 bg-white border border-[#EDEDF4] hover:bg-[#FAFAFD] text-[#5A5A6D] font-bold rounded-lg transition-colors text-[13px]"
