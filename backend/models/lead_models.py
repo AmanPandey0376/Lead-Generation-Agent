@@ -32,24 +32,3 @@ class GenerateLeadsInput(BaseModel):
     brand: Optional[str] = Field(default="Not Specified")
     description: Optional[str] = Field(default="Not Specified")
 
-
-class SingleEmailRequest(BaseModel):
-    email: str
-    subject: str
-    body: str
-
-
-class BulkEmailRequest(BaseModel):
-    leadIds: Optional[List[int]] = None
-    leads: Optional[List[Lead]] = None
-    subject: str
-    body: str
-    delay: Optional[float] = 2.0
-
-
-class EmailTemplateSchema(BaseModel):
-    id: Optional[int] = None
-    template_name: str
-    subject: str
-    body: str
-

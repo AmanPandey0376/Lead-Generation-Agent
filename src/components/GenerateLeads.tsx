@@ -35,8 +35,6 @@ interface GenerateLeadsProps {
   saveToDatabase: () => Promise<void>;
   exportToExcel: () => void;
   savingDB: boolean;
-  openComposeModal: (lead: Lead) => void;
-  openBulkComposeModal: (targetLeads: Lead[]) => void;
 }
 
 const FilterSelect = ({ label, allLabel, options, value, onChange }: any) => {
@@ -202,7 +200,7 @@ const FormSelect = ({
   );
 };
 
-export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads, saveToDatabase, exportToExcel, savingDB, openComposeModal, openBulkComposeModal }: GenerateLeadsProps) {
+export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads, saveToDatabase, exportToExcel, savingDB }: GenerateLeadsProps) {
   const [loading, setLoading] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string>("");
   const [generationStats, setGenerationStats] = useState<{
@@ -859,21 +857,17 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
               <span className="text-[13px] font-medium text-[#7A7A8F]">Apply action to selected leads:</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              {selectedLeads.size === 1 ? (
-                <Button onClick={() => {
-                  const srNo = Array.from(selectedLeads)[0];
-                  const lead = leads.find(l => l.srNo === srNo);
-                  if (lead) openComposeModal(lead);
-                }} className="h-8 shadow-sm text-[12px] font-semibold bg-[#6B2BFF] text-white hover:bg-[#5A1AE5] gap-1.5 border-none">
-                  <Send className="w-3.5 h-3.5" /> Send Email
-                </Button>
-              ) : (
-                <Button onClick={() => {
-                  const targetLeads = leads.filter(l => selectedLeads.has(l.srNo));
-                  openBulkComposeModal(targetLeads);
-                }} className="h-8 shadow-sm text-[12px] font-semibold bg-[#6B2BFF] text-white hover:bg-[#5A1AE5] gap-1.5 border-none">
-                  <Send className="w-3.5 h-3.5" /> Send Bulk Email
-                </Button>
+              {selectedLeads.size === 1 && (
+                <a
+                  href={(() => {
+                    const srNo = Array.from(selectedLeads)[0];
+                    const lead = leads.find(l => l.srNo === srNo);
+                    return lead?.email ? `mailto:${lead.email}` : undefined;
+                  })()}
+                  className="h-8 px-3 shadow-sm text-[12px] font-semibold bg-[#6B2BFF] text-white hover:bg-[#5A1AE5] gap-1.5 rounded-lg flex items-center transition-colors"
+                >
+                  <Mail className="w-3.5 h-3.5" /> Email Contact
+                </a>
               )}
               <Button onClick={() => {
                 setLeads(prev => prev.filter(l => !selectedLeads.has(l.srNo)));
@@ -1194,9 +1188,14 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
                             </div>
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <Button onClick={() => openComposeModal(selectedLeadData)} className="h-9 px-4 bg-[#111118] text-white rounded-lg text-[13px] font-semibold hover:bg-[#22222A] gap-2">
-                              <Send className="w-3.5 h-3.5" /> Compose Email
-                            </Button>
+                            {selectedLeadData.email && (
+                              <a
+                                href={`mailto:${selectedLeadData.email}`}
+                                className="h-9 px-4 bg-[#111118] text-white rounded-lg text-[13px] font-semibold hover:bg-[#22222A] gap-2 flex items-center transition-colors"
+                              >
+                                <Mail className="w-3.5 h-3.5" /> Open in Mail
+                              </a>
+                            )}
                             <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><PhoneCall className="w-4 h-4" /></Button>
                             <Button variant="outline" className="h-9 w-9 p-0 rounded-lg border-[#E5E5EB] text-[#5A5A6D] hover:bg-[#FAFAFC]"><Copy className="w-4 h-4" /></Button>
                           </div>
@@ -1330,12 +1329,22 @@ export function GenerateLeads({ leads, setLeads, selectedLeads, setSelectedLeads
 
                         <div className="mt-auto flex items-center justify-between pt-3 border-t border-[#E5E5EB]/60 relative z-10">
                           <div className="flex items-center gap-1.5">
-                            <button onClick={() => openComposeModal(lead)} className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F3EFFF] hover:text-[#6B2BFF] transition-colors"><Mail className="w-4 h-4" /></button>
-                            <button className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F0F7FA] hover:text-[#0077B5] transition-colors"><Linkedin className="w-4 h-4" /></button>
+                            {lead.email ? (
+                              <a href={`mailto:${lead.email}`} className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F3EFFF] hover:text-[#6B2BFF] transition-colors"><Mail className="w-4 h-4" /></a>
+                            ) : (
+                              <span className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#D2D2E0]"><Mail className="w-4 h-4" /></span>
+                            )}
+                            {lead.linkedIn ? (
+                              <a href={lead.linkedIn.startsWith("http") ? lead.linkedIn : `https://${lead.linkedIn}`} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#A0A0B2] hover:bg-[#F0F7FA] hover:text-[#0077B5] transition-colors"><Linkedin className="w-4 h-4" /></a>
+                            ) : (
+                              <span className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-[#D2D2E0]"><Linkedin className="w-4 h-4" /></span>
+                            )}
                           </div>
-                          <Button onClick={() => openComposeModal(lead)} className="h-9 px-4 text-[13px] bg-[#111118] text-white font-semibold rounded-lg hover:bg-[#6B2BFF] shadow-sm transition-colors group/btn overflow-hidden relative">
-                            <span className="relative z-10 flex items-center gap-2">Reach out <Send className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" /></span>
-                          </Button>
+                          {lead.email && (
+                            <a href={`mailto:${lead.email}`} className="h-9 px-4 text-[13px] bg-[#111118] text-white font-semibold rounded-lg hover:bg-[#6B2BFF] shadow-sm transition-colors flex items-center gap-2">
+                              <span>Contact</span> <Mail className="w-3 h-3" />
+                            </a>
+                          )}
                         </div>
                       </motion.div>
                     );
