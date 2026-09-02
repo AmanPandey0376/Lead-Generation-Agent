@@ -20,7 +20,7 @@ export interface ExtractedLead {
  * Sends search results to Claude or Groq to extract B2B leads based STRICTLY on the search data.
  */
 export async function extractLeads(searchResults: SearchResult[]): Promise<ExtractedLead[]> {
-  const provider = process.env.AI_PROVIDER || "claude";
+  const provider = process.env.AI_PROVIDER || "groq";
 
   if (searchResults.length === 0) {
     return [];
@@ -84,7 +84,7 @@ JSON Output Format:
       throw new Error("GROQ_API_KEY is not defined in the environment.");
     }
     const groq = new Groq({ apiKey, dangerouslyAllowBrowser: true });
-    const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    const modelName = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
     const response = await groq.chat.completions.create({
       model: modelName,
@@ -98,6 +98,7 @@ JSON Output Format:
           content: prompt,
         },
       ],
+      response_format: { type: "json_object" },
       max_tokens: 4096
     });
     text = response.choices[0]?.message?.content?.trim() || "";

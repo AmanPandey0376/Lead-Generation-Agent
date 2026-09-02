@@ -24,7 +24,7 @@ export interface ProductAnalysisResult {
  * Analyzes the product input using Claude or Groq to identify industries, buyer types, competitors, and keywords.
  */
 export async function analyzeProduct(input: ProductAnalysisInput): Promise<ProductAnalysisResult> {
-  const provider = process.env.AI_PROVIDER || "claude";
+  const provider = process.env.AI_PROVIDER || "groq";
 
   const prompt = `Act as an expert B2B product researcher and market analyst specializing in the Middle East / GCC market.
 Analyze the following product/service details to help us find high-quality sales leads:
@@ -66,7 +66,7 @@ JSON format:
       throw new Error("GROQ_API_KEY is not defined in the environment.");
     }
     const groq = new Groq({ apiKey, dangerouslyAllowBrowser: true });
-    const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    const modelName = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
     const response = await groq.chat.completions.create({
       model: modelName,

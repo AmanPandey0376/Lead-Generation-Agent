@@ -3,6 +3,7 @@ import json
 import logging
 import httpx
 from typing import Dict, Any, List
+from anthropic import AsyncAnthropic
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ async def analyze_product(
     """
     Analyzes the product using Claude or Groq to extract keywords, industries, competitors, and buyer types.
     """
-    provider = os.getenv("AI_PROVIDER", "claude").lower()
+    provider = os.getenv("AI_PROVIDER", "groq").lower()
     
     prompt = f"""Act as an expert B2B product researcher and market analyst specializing in the Middle East / GCC market.
 Analyze the following product/service details to help us find high-quality sales leads:
@@ -56,7 +57,7 @@ JSON format:
             api_key = os.getenv("GROQ_API_KEY")
             if not api_key:
                 raise ValueError("GROQ_API_KEY is not defined in the environment.")
-            model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+            model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
             
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -74,11 +75,12 @@ JSON format:
                         "content": prompt
                     }
                 ],
+                "response_format": {"type": "json_object"},
                 "temperature": 0.2,
                 "max_tokens": 2048
             }
             
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=45.0) as client:
                 response = await client.post(
                     "https://api.groq.com/openai/v1/chat/completions",
                     headers=headers,
@@ -93,7 +95,6 @@ JSON format:
             if not api_key:
                 raise ValueError("ANTHROPIC_API_KEY is not defined in the environment.")
             
-            from anthropic import AsyncAnthropic
             client = AsyncAnthropic(api_key=api_key)
             
             response = await client.messages.create(

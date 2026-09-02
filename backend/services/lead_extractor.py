@@ -107,7 +107,7 @@ JSON Output Format:
   ]
 }}"""
 
-    provider = os.getenv("AI_PROVIDER", "claude").lower()
+    provider = os.getenv("AI_PROVIDER", "groq").lower()
     text = ""
 
     try:
@@ -115,7 +115,7 @@ JSON Output Format:
             api_key = os.getenv("GROQ_API_KEY")
             if not api_key:
                 raise ValueError("GROQ_API_KEY is not defined in the environment.")
-            model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+            model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
             
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -133,6 +133,7 @@ JSON Output Format:
                         "content": prompt
                     }
                 ],
+                "response_format": {"type": "json_object"},
                 "temperature": 0.2,
                 "max_tokens": 4096
             }

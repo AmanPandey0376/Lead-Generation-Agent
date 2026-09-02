@@ -10,8 +10,8 @@ export async function enrichLeads(
   leads: ExtractedLead[],
   progressCallback?: (msg: string) => void
 ): Promise<ExtractedLead[]> {
-  const provider = process.env.AI_PROVIDER || "claude";
-  const apiKey = provider === "groq" ? process.env.GROQ_API_KEY : process.env.ANTHROPIC_API_KEY;
+  const provider = process.env.AI_PROVIDER || "groq";
+  const apiKey = provider === "claude" ? process.env.ANTHROPIC_API_KEY : process.env.GROQ_API_KEY;
   const serperKey = process.env.SERPER_API_KEY;
 
   if (!apiKey || !serperKey) {
@@ -93,7 +93,7 @@ JSON Output Format:
 
         let text = "";
         if (provider === "groq" && groq) {
-          const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+          const modelName = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
           const response = await groq.chat.completions.create({
             model: modelName,
             messages: [

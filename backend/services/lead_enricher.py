@@ -74,11 +74,11 @@ JSON Output Format:
   "linkedIn": "LinkedIn URL or constructed fallback"
 }}"""
 
-        provider = os.getenv("AI_PROVIDER", "claude").lower()
+        provider = os.getenv("AI_PROVIDER", "groq").lower()
         text = ""
 
         if provider == "groq":
-            model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+            model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
@@ -95,6 +95,7 @@ JSON Output Format:
                         "content": prompt
                     }
                 ],
+                "response_format": {"type": "json_object"},
                 "temperature": 0.2,
                 "max_tokens": 1000
             }
@@ -164,13 +165,13 @@ async def enrich_leads(
     """
     Enriches a list of leads by searching for missing contact details in batches.
     """
-    provider = os.getenv("AI_PROVIDER", "claude").lower()
-    if provider == "groq":
-        api_key = os.getenv("GROQ_API_KEY")
-        key_name = "GROQ_API_KEY"
-    else:
+    provider = os.getenv("AI_PROVIDER", "groq").lower()
+    if provider == "claude":
         api_key = os.getenv("ANTHROPIC_API_KEY")
         key_name = "ANTHROPIC_API_KEY"
+    else:
+        api_key = os.getenv("GROQ_API_KEY")
+        key_name = "GROQ_API_KEY"
         
     serper_key = os.getenv("SERPER_API_KEY")
 
