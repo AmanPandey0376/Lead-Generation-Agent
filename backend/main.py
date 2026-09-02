@@ -49,13 +49,24 @@ app = FastAPI(
 )
 
 # CORS configuration
+allowed_origins = [
+    "https://leadgenerationagent.vercel.app",
+    "https://lead-generation-agent-two.vercel.app",
+    "https://lead-generation-agent-phi.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+cors_origins_env = os.getenv("CORS_ORIGINS")
+if cors_origins_env:
+    for o in cors_origins_env.split(","):
+        trimmed = o.strip()
+        if trimmed and trimmed not in allowed_origins:
+            allowed_origins.append(trimmed)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://leadgenerationagent.vercel.app",
-        "https://lead-generation-agent-two.vercel.app",
-        "http://localhost:5173",
-    ],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
